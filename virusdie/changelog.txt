@@ -1,0 +1,84 @@
+= v 1.1.3
+*Release Date - 20 Mar 2024*
+* Updated Virusdie API interaction.
+
+= v 1.1.2
+*Release Date - 26 October 2023*
+* Updated Virusdie API interaction.
+
+= v 1.1.1
+*Release Date - 13 October 2023*
+* Bugs are fixed.
+
+= v 1.1.0
+*Release Date - 26 July 2023*
+* Added the new.virusdie.com integration.
+* Added website database scan results.
+* Bugs are fixed.
+
+= v 1.0.16
+*Release Date - 06 July 2023*
+* Fixed broken links to the Virusdie account.
+* Fixed wrong paths to external files (scripts, css, pictures).
+* Restored compatibility with  older versions of PHP (5.2 is supported now).
+* And other fixes.
+
+= v 1.0.15
+*Release Date - 12 February 2022*
+* We have added an autotest to check the WAF availability.
+* We have added fixes for some issues with WAF on PHP 8.x.
+
+= v 1.0.14
+*Release Date - 02 February 2022*
+* We have performed some code optimizations.
+
+= v 1.0.13
+*Release Date - 20 January 2022*
+* Added cURL support.
+* Added a page with the instructions when there're no required PHP settings in the system.
+
+= v 1.0.12
+*Release Date - 06 January 2022*
+* The code has been optimized.
+
+= v 1.0.11
+*Release Date - 05 January 2022*
+* The code has been optimized.
+
+= v 1.0.10
+*Release Date - 23 December 2021*
+* The code has been optimized.
+
+= v 1.0.9
+*Release Date - 07 December 2021*
+* Fixed a bug with attacks blocked by the firewall when the indicator of the found vulnerability was displayed.
+
+= v 1.0.7
+*Release Date - 06 December 2021*
+* Fixed a bug when the site was not displayed in the dashboard and switches did not work.
+
+= v 1.0.5
+*Release Date - 02 December 2021*
+* We changed the order of connection styles
+
+= v 1.0.4
+*Release Date - 26 November 2021*
+* We've added notification about the absence of a email subscription during the authorization.
+
+= v 1.0.3
+*Release Date - 26 November 2021*
+* Support WordPress Multisite
+* UX improved
+
+= v 1.0.2
+*Release Date - 25 November 2021*
+* We have fixed some issues in php 8.x
+
+= v 1.0.1
+*Release Date - 10 November 2021*
+* We fixed some discovered bugs:
+	* A problem with a toggle switch was fixed
+
+= v 1.0.0
+*Release Date - 28 October 2021*
+* Initial release with autorization at virusdie.com and free and premium control panels.
