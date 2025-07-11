@@ -2,9 +2,9 @@
 Contributors: virusdie, matveevartem
 Tags: antivirus, security plugin, security, malware scanner, firewall, website antivirus, malware, virusdie, WAF, auto cleanup, web application firewall, patch manager
 Requires at least: 5.0
-Tested up to: 6.2
+Tested up to: 6.8
 Requires PHP: 5.6
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Plugin URI: https://wordpress.org/plugins/virusdie/
@@ -169,6 +169,12 @@ You can find both documents on our official website via links: [Terms of Use](ht
 
 == Changelog ==
 
+= v 1.1.4
+
+*Release Date - 11 July 2025*
+
+* Potential vulnerability fix.
+
 = v 1.1.3
 
 *Release Date - 20 Mar 2024*
@@ -289,4 +295,5 @@ You can find both documents on our official website via links: [Terms of Use](ht
 = v 1.0.0
 
 *Release Date - 28 October 2021*
+
 * Initial release with autorization at virusdie.com and free and premium control panels.

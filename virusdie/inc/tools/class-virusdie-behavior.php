@@ -24,7 +24,7 @@ class VDWS_VirusdieBehavior
 	private function init()
 	{
 		if (VDWS_VirusdieApiClient::get_conn_type()) {
-			if ($res = $this->check_auth()) {
+			if (VDWS_VirusdieApiClient::is_key_valid() || $this->auth()) {
 				if ($this->is_logout()) {
 					$this->logout();
 				} else {
@@ -44,29 +44,20 @@ class VDWS_VirusdieBehavior
 		VDWS_VirusdieView::render($this->vars);
 	}
 
-	private function check_auth()
-	{
-		if (!VDWS_VirusdieApiClient::is_key_valid()) {
-			return $this->auth();
-		} else {
-			return true;
-		}
-	}
-
 	private function auth()
 	{
-		$email = isset($_POST['vd_email']) ? sanitize_email($_POST['vd_email']) : null;
-		$code = isset($_POST['vd_code']) ? sanitize_text_field($_POST['vd_code']) : null;
-		if (!$email) {
-			if (empty($_POST['vd_email'])) {
-				VDWS_Virusdie::set_current_tab('auth');
-			} else {
-				define('VDWS_FOOTER_INVALID_EMAIL', 1);
-				VDWS_Virusdie::set_current_tab('auth');
-			}
+		if (empty($_POST['vd_email']) || empty($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'vd_otp_login')) {
+			VDWS_Virusdie::set_current_tab('auth');
 			return false;
 		}
-		if ($email && !$code) {
+		$email = sanitize_email($_POST['vd_email']);
+		if (!$email) {
+			define('VDWS_FOOTER_INVALID_EMAIL', 1);
+			VDWS_Virusdie::set_current_tab('auth');
+			return false;
+		}
+		$code = isset($_POST['vd_code']) ? sanitize_text_field($_POST['vd_code']) : null;
+		if (!$code) {
 			if (VDWS_VirusdieApiClient::signup($email, $error)) {
 				VDWS_Virusdie::set_current_tab('auth-pass');
 			} else {
@@ -82,16 +73,14 @@ class VDWS_VirusdieBehavior
 			}
 			return false;
 		}
-		if ($email && $code) {
-			if ($code = VDWS_VirusdieApiClient::signin($email, $code)) {
-				VDWS_Virusdie::set_api_key($code);
-				return true;
-			} else {
-				define('VDWS_FOOTER_INVALID_CODE', 1);
-				VDWS_Virusdie::set_current_tab('auth-pass');
-				return false;
-			}
+		$code = VDWS_VirusdieApiClient::signin($email, $code);
+		if (!$code) {
+			define('VDWS_FOOTER_INVALID_CODE', 1);
+			VDWS_Virusdie::set_current_tab('auth-pass');
+			return false;
 		}
+		VDWS_Virusdie::set_api_key($code);
+		return true;
 	}
 
 	private function work()
