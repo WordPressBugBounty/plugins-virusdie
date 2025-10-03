@@ -65,8 +65,5 @@ virusdieIOSocket.on('connect', () => {
 	case 'autocleanup':
 		virusdieRunFunction('clickToSwitcher', 'autoscan', data.val);
 		break;
-	/*case '':
-		virusdieRunFunction('clickToSwitcher', 'tariff', data.val);
-		break;*/
 	}
 });

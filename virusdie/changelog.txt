@@ -1,3 +1,8 @@
+= v 1.1.5
+*Release Date - 03 October 2025*
+* Fix login issues.
+* Updated Virusdie API interaction.
+
 = v 1.1.4
 *Release Date - 11 July 2025*
 * Potential vulnerability fix.

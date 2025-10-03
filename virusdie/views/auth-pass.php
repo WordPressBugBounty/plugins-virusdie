@@ -17,11 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="vd-auth__header">One-time pass</span>
 			<form method="POST" action="?page=virusdie">
 				<?php wp_nonce_field('vd_otp_login'); echo "\n"; ?>
-				<input type="hidden" name="vd_email" value="<?php echo isset($_POST['vd_email']) ? esc_attr(sanitize_email($_POST['vd_email'])) : ''; ?>" />
+				<input type="hidden" name="vd_email" value="<?php echo isset($_POST['vd_email']) ? esc_attr($_POST['vd_email']) : ''; ?>" />
 				<input class="form-control --mb-16" placeholder="Enter one-time password" name="vd_code" />
 				<p class="vd-auth__text">
 					Please enter one-time secure password we've just sent to your
-					<strong><?php echo isset($_POST['vd_email']) ? esc_html(sanitize_email($_POST['vd_email'])) : ''; ?></strong>
+					<strong><?php echo isset($_POST['vd_email']) ? esc_html($_POST['vd_email']) : ''; ?></strong>
 				</p>
 				<div class="vd-auth__btns">
 					<button type="submit" class="vd-btn --green">Confirm one-time password</button>

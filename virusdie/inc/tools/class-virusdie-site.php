@@ -50,9 +50,6 @@ class VDWS_VirusdieSite
 			return;
 		}
 
-		$user->setSitesCount(1);
-		$user->hasCurrentSite(true);
-
 		$state = $site['state'];
 		$config = $site['config'];
 

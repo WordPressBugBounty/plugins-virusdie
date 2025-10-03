@@ -50,8 +50,8 @@ class VDWS_VirusdieBehavior
 			VDWS_Virusdie::set_current_tab('auth');
 			return false;
 		}
-		$email = sanitize_email($_POST['vd_email']);
-		if (!$email) {
+		$email = trim($_POST['vd_email']); // sanitize_email($_POST['vd_email']) can discard valid email addresses
+		if (strlen($email) < 6) {
 			define('VDWS_FOOTER_INVALID_EMAIL', 1);
 			VDWS_Virusdie::set_current_tab('auth');
 			return false;
@@ -114,7 +114,6 @@ class VDWS_VirusdieBehavior
 
 	private function dashboard()
 	{
-		//VDWS_Virusdie::set_current_tab( !$this->user->isPaid() || isset($_GET['premium']) ? 'scan-start' : 'scan-start' );
 		VDWS_Virusdie::set_current_tab(!$this->user->isPaid() || isset($_GET['free']) ? 'free' : 'premium');
 		return true;
 	}
@@ -277,7 +276,7 @@ class VDWS_VirusdieBehavior
 
 	public static function vd_resend()
 	{
-		return isset($_POST['vd_email']) && wp_die(VDWS_VirusdieApiClient::signup(sanitize_email($_POST['vd_email']), $err));
+		return isset($_POST['vd_email']) && wp_die(VDWS_VirusdieApiClient::signup($_POST['vd_email'], $err));
 	}
 
 }

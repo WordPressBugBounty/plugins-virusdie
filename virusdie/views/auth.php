@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="vd-auth__header">Please log in</span>
 			<form method="POST" action="?page=virusdie">
 				<?php wp_nonce_field('vd_otp_login'); echo "\n"; ?>
-				<input class="form-control --mb-16" placeholder="Enter your Email" name="vd_email" value="<?php echo isset($_POST['vd_email']) ? esc_attr(sanitize_email($_POST['vd_email'])) : ''; ?>" />
+				<input class="form-control --mb-16" placeholder="Enter your Email" name="vd_email" value="<?php echo isset($_POST['vd_email']) ? esc_attr($_POST['vd_email']) : ''; ?>" />
 				<p class="vd-auth__text">We’ll send your one-time password by email,
 					to let you sign in from WordPress plugin securely.</p>
 				<button type="submit" class="vd-btn --green">Get one-time password</button>

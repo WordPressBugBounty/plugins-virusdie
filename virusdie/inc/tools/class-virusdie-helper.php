@@ -71,8 +71,6 @@ class VDWS_VirusdieHelper
 			return array('ip' => 0, 'total' => 0, 'iso' => 0);
 		}
 
-		$ps = $user->getPS();
-
 		$ip = 0;
 		$total = 0;
 		$list = array();
@@ -93,11 +91,8 @@ class VDWS_VirusdieHelper
 			$handle = fopen($folder . '/' . $file, 'r');
 			if ($handle) {
 				while (($line = fgets($handle)) !== false) {
-					// $_ = ($arr = explode(',', $line)) && count($arr) === 8 ? intval(end($arr)) : $ps;
-					// if ($isFirewallActiveMode && $_ === 1) {
-						++$countries[$iso]['cnt'];
-						++$total;
-					// }
+					++$countries[$iso]['cnt'];
+					++$total;
 				}
 				fclose($handle);
 			}
