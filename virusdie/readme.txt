@@ -4,7 +4,7 @@ Tags: antivirus, security plugin, security, malware scanner, firewall, website a
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 5.6
-Stable tag: 1.1.5
+Stable tag: 1.1.8
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Plugin URI: https://wordpress.org/plugins/virusdie/
@@ -168,6 +168,25 @@ You can find both documents on our official website via links: [Terms of Use](ht
 4. Premium dashboard page
 
 == Changelog ==
+
+= v 1.1.8
+
+*Release Date - 31 January 2026*
+
+* Improved plugin security and stability.
+
+= v 1.1.7
+
+*Release Date - 30 December 2025*
+
+* The API key verification procedure and the procedure to get access to security plugin been updated. To deliver more stability and safety.
+
+= v 1.1.6
+
+*Release Date - 12 December 2025*
+
+* Error handling has been reworked.
+* More detailed error messages.
 
 = v 1.1.5
 

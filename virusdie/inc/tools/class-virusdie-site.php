@@ -73,7 +73,7 @@ class VDWS_VirusdieSite
 		$this->autotreatment_status = $isFSTreat && $isDBTreat;
 		$this->dailyscan_status = $isDailyScan;
 		$this->patchmanager_status = $user->isPaid() ? $isFSPatch : false;
-		$this->blstatus = intval($site['blstatus']);
+		$this->blstatus = isset($site['blstatus']) ? intval($site['blstatus']) : 0;
 		if (!empty($site['state']['scan'])) {
 			$scan = $site['state']['scan'];
 			$fsStats = $site['state']['stats']['fs'];
@@ -139,11 +139,6 @@ class VDWS_VirusdieSite
 	public function getDbCount()
 	{
 		return intval($this->db_threats - $this->db_cleaned);
-	}
-
-	public function isBlacklisted()
-	{
-		return !!$this->blstatus;
 	}
 
 	public function getBlacklistedCount()

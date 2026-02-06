@@ -36,7 +36,7 @@ class VDWS_VirusdieMessages
 				self::$site->getDbCount() ||
 				self::$site->getFirewallBlockedCount() ||
 				self::$site->getFirewallBlockedIp() ||
-				self::$site->isBlacklisted()
+				self::$site->getBlacklistedCount()
 					? 'Issues were found' : 'No issues found'));
 		self::setTextMessage('scanned_at', 'Scanned at: ' . date('M d H:i', VDWS_VirusdieHelper::getBrowserTime(self::$site->lastScan())));
 		self::setTextMessage('fw_report_date', 'Report ' . date('M d', self::$site->lastScan()));
@@ -54,14 +54,14 @@ class VDWS_VirusdieMessages
 			self::$site->getFirewallBlockedCount() . ' ' . self::Declension('attacks were', self::$site->getFirewallBlockedCount()) . ' detected from ' .
 				self::$site->getFirewallBlockedIp() . ' IP ' . self::Declension('addresses', self::$site->getFirewallBlockedIp()) . ' today' :
 					'No attacks were detected today');
-		self::setTextMessage('black_status', self::$site->isBlacklisted() ?
+		self::setTextMessage('black_status', self::$site->getBlacklistedCount() ?
 			'Mentioned on '. self::$site->getBlacklistedCount() . ' ' . self::Declension('blacklists', self::$site->getBlacklistedCount()) : 'The site is not blacklisted');
 		self::setMarkerColor('sync_status', self::$site->isSyncError() ? '--not-sync' : '--clear');
 		self::setMarkerColor('scan_status', self::$site->getInfectedCount() ? '--malware' : '--clear');
 		self::setMarkerColor('vul_status', self::$site->getVulCount() ? '--vulnerable' : '--clear');
 		self::setMarkerColor('db_status', self::$site->getDbCount() ? '--database' : '--clear');
 		self::setMarkerColor('fw_status', self::$site->getFirewallBlockedIp() ? '--malware' : '--clear');
-		self::setMarkerColor('black_status', self::$site->isBlacklisted() ? '--blacklisted' : '--clear');
+		self::setMarkerColor('black_status', self::$site->getBlacklistedCount() ? '--blacklisted' : '--clear');
 	}
 
 	public static function getTextMessage( $name )

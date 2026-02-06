@@ -8,7 +8,7 @@
  * Plugin Name: Virusdie | One-click website security
  * Description: One-Click Website security with Virusdie Wordpress Plugin
  * Author: Virusdie
- * Version: 1.1.5
+ * Version: 1.1.8
  * Requires PHP: 5.6
  * Author URI: https://virusdie.com
  * License: GPLv2
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin version, name, path, URL
-define( 'VDWS_VIRUSDIE_PLUGIN_VERSION',   '1.1.5' );
+define( 'VDWS_VIRUSDIE_PLUGIN_VERSION',   '1.1.8' );
 define( 'VDWS_VIRUSDIE_PLUGIN_DIRECTORY', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'VDWS_VIRUSDIE_PLUGIN_URL',       trailingslashit( plugins_url( '/', __FILE__ ) ) );
 define( 'VDWS_VIRUSDIE_PLUGIN_ADMIN_URL', admin_url( 'admin.php?page=virusdie', is_ssl() ? 'https' : 'http' ) );

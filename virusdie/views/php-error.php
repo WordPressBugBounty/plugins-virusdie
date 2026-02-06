@@ -1,11 +1,4 @@
 <?php
-/**
- * The error template.
- *
- * @package Virusdie
- */
-
-// Make sure the file is not directly accessible.
 if ( ! defined( 'ABSPATH' ) ) {
 	die( 'We\'re sorry, but you can not directly access this file.' );
 }
@@ -14,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="vd-container">
 	<div class="vd-scanner">
 		<div class="vd-scanner__container">
-			<span class="vd-scanner__header">Hey, it looks like you can't make requests to 
+			<span class="vd-scanner__header">Hey, it looks like you can't make requests to
 				<a href="<?php echo constant('VDWS_VIRUSDIE_SITE_LANDING'); ?>"><?php echo constant('VDWS_VIRUSDIE_SITE_LANDING'); ?></a>.</span>
 			<p class="vd-scanner__text">
 			Set <strong><code>allow_url_fopen = On</code></strong> in php.ini file<br/>

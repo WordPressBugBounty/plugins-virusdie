@@ -24,7 +24,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 						<?php echo $vd_site->getInfectedCount() || $vd_site->getFirewallBlockedIp() ? '<div class="vd-mainBlock__badge --malware"></div>' : ''; ?>
 						<?php echo $vd_site->getVulCount() ? '<div class="vd-mainBlock__badge --vulnerable"></div>' : ''; ?>
 						<?php echo $vd_site->getDbCount() ? '<div class="vd-mainBlock__badge --database"></div>' : ''; ?>
-						<?php // echo $vd_site->isBlacklisted() ? '<div class="vd-mainBlock__badge --blacklisted"></div>' : ''; ?>
+						<?php // echo $vd_site->getBlacklistedCount() ? '<div class="vd-mainBlock__badge --blacklisted"></div>' : ''; ?>
 					<?php endif ?>
 				</div>
 				<span class="vd-mainBlock__domain"><?php echo esc_html($vd_site->getDomain()); ?></span>
@@ -104,14 +104,14 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 				<div class="vd-antivirus__ctrl-block">
 					<span class="vd-antivirus__ctrl-text">Daily scans</span>
 					<label class="vd-switch-block__control --m-0" for="onDailyScans">
-						<input id="onDailyScans" type="checkbox" name="onDailyScans" class="vd-js-switch" data-available="off" <?php echo $vd_site->isDailyScan() ? 'checked' : ''; ?> />
+						<input id="onDailyScans" type="checkbox" name="onDailyScans" class="vd-js-switch" data-available="off" disabled <?php echo $vd_site->isDailyScan() ? 'checked' : ''; ?> />
 						<span class="vd-switch-block__slider --round --green"></span>
 					</label>
 				</div>
 				<div class="vd-antivirus__ctrl-block">
 					<span class="vd-antivirus__ctrl-text">Automatic website cleanup</span>
 					<label class="vd-switch-block__control --m-0" for="onAutoClean">
-						<input id="onAutoClean" type="checkbox" name="onAutoClean" class="vd-js-switch" data-available="off" <?php echo $vd_site->isAutoTreatment() ? 'checked' : ''; ?> ?> />
+						<input id="onAutoClean" type="checkbox" name="onAutoClean" class="vd-js-switch" data-available="off" disabled <?php echo $vd_site->isAutoTreatment() ? 'checked' : ''; ?> />
 						<span class="vd-switch-block__slider --round --green"></span>
 					</label>
 				</div>
@@ -154,7 +154,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 			<div class="vd-patchmanager__head">
 				<span class="vd-patchmanager__header">Patch Manager<mark>Premium</mark></span>
 				<label class="vd-switch-block__control --m-0" for="onPatchManager">
-					<input id="onPatchManager" type="checkbox" name="onPatchManager" class="vd-js-switch" data-available="off" <?php echo $vd_site->isPatchManager() ? 'checked' : ''; ?> />
+					<input id="onPatchManager" type="checkbox" name="onPatchManager" class="vd-js-switch" data-available="off" disabled <?php echo $vd_site->isPatchManager() ? 'checked' : ''; ?> />
 					<span class="vd-switch-block__slider --round --green"></span>
 				</label>
 			</div>
@@ -196,7 +196,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 			<div class="vd-fwall__head">
 				<span class="vd-fwall__header">Website Firewall<mark>Premium</mark></span>
 				<label class="vd-switch-block__control --m-0" for="onFireWall">
-					<input id="onFireWall" type="checkbox" name="onFireWall" class="vd-js-switch" data-available="off" <?php echo $vd_site->isFirewallOn() ? 'checked' : ''; ?> />
+					<input id="onFireWall" type="checkbox" name="onFireWall" class="vd-js-switch" data-available="off" disabled <?php echo $vd_site->isFirewallOn() ? 'checked' : ''; ?> />
 					<span class="vd-switch-block__slider --round --green"></span>
 				</label>
 			</div>
@@ -298,7 +298,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 						</p>
 					</div>
 					<label class="vd-switch-block__control --m-0 --green-border" for="onSecDailyScans">
-						<input id="onSecDailyScans" type="checkbox" name="onDailyScansSec" class="vd-js-switch" data-available="off" <?php echo $vd_site->isDailyScan() ? 'checked' : ''; ?> />
+						<input id="onSecDailyScans" type="checkbox" name="onDailyScansSec" class="vd-js-switch" data-available="off" disabled <?php echo $vd_site->isDailyScan() ? 'checked' : ''; ?> />
 						<span class="vd-switch-block__slider --round --green-border"></span>
 					</label>
 				</div>
@@ -310,7 +310,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 						</p>
 					</div>
 					<label class="vd-switch-block__control --m-0 --green-border" for="onSecAutoClean">
-						<input id="onSecAutoClean" type="checkbox" name="onAutoCleanSec" data-available="off" class="vd-js-switch" <?php echo $vd_site->isAutoTreatment() ? 'checked' : ''; ?> />
+						<input id="onSecAutoClean" type="checkbox" name="onAutoCleanSec" data-available="off" class="vd-js-switch" disabled <?php echo $vd_site->isAutoTreatment() ? 'checked' : ''; ?> />
 						<span class="vd-switch-block__slider --round --green-border"></span>
 					</label>
 				</div>
@@ -322,7 +322,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 						</p>
 					</div>
 					<label class="vd-switch-block__control --m-0 --green-border" for="onSecFireWall">
-						<input id="onSecFireWall" type="checkbox" name="onFireWallSec" data-available="off" class="vd-js-switch" <?php echo $vd_site->isFirewallOn() ? 'checked' : ''; ?> />
+						<input id="onSecFireWall" type="checkbox" name="onFireWallSec" data-available="off" class="vd-js-switch" disabled <?php echo $vd_site->isFirewallOn() ? 'checked' : ''; ?> />
 						<span class="vd-switch-block__slider --round --green-border"></span>
 					</label>
 				</div>
@@ -334,7 +334,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 						</p>
 					</div>
 					<label class="vd-switch-block__control --m-0 --green-border" for="onSecFixPatching">
-						<input id="onSecFixPatching" type="checkbox" name="onPatchManagerSec" data-available="off" class="vd-js-switch" <?php echo $vd_site->isPatchManager() ? 'checked' : ''; ?> />
+						<input id="onSecFixPatching" type="checkbox" name="onPatchManagerSec" data-available="off" class="vd-js-switch" disabled <?php echo $vd_site->isPatchManager() ? 'checked' : ''; ?> />
 						<span class="vd-switch-block__slider --round --green-border"></span>
 					</label>
 				</div>
@@ -347,7 +347,7 @@ VDWS_VirusdieView::renderJsMap($vd_site);
 						</p>
 					</div>
 					<label class="vd-switch-block__control --m-0 --green-border" for="onInsuranceSec">
-						<input id="onInsuranceSec" type="checkbox" name="onInsuranceSec" data-available="off" disabled="disabled">
+						<input id="onInsuranceSec" type="checkbox" name="onInsuranceSec" data-available="off" disabled />
 						<span class="vd-switch-block__slider --round --green-border"></span>
 					</label>
 				</div>

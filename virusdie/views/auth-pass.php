@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</p>
 				<div class="vd-auth__btns">
 					<button type="submit" class="vd-btn --green">Confirm one-time password</button>
-					<a href="" id="resend" class="vd-auth__link">Get one more one-time password</a>
+					<!-- <a href="" id="resend" class="vd-auth__link">Get one more one-time password</a> -->
 				</div>
 			</form>
 		</div>

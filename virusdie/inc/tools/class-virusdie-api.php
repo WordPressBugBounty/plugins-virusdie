@@ -216,17 +216,12 @@ class VDWS_VirusdieApiClient
 		return self::check_result($result) && $result['result']['expires'] > time();
 	}
 
-	public static function getSyncFile(VDWS_VirusdieUser $user)
+	public static function getSyncFile()
 	{
 		$url = constant('VDWS_VIRUSDIE_API_HOST') . 'syncfile_get/';
 		$context = self::build_stream_context('GET', VDWS_Virusdie::get_api_key());
 		$result = self::make_http_request($url, $context, true);
-		$fname = $user ? $user->getSyncFileName() : null;
-		if ($result && $fname) {
-			return array('name' => $fname, 'content' => $result);
-		} else {
-			return false;
-		}
+		return $result;
 	}
 
 	public static function scan()

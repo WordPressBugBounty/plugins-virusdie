@@ -1,3 +1,16 @@
+= v 1.1.8
+*Release Date - 31 January 2026*
+* Improved plugin security and stability.
+
+= v 1.1.7
+*Release Date - 30 December 2025*
+* The API key verification procedure and the procedure to get access to security plugin been updated. To deliver more stability and safety.
+
+= v 1.1.6
+*Release Date - 12 December 2025*
+* Error handling has been reworked.
+* More detailed error messages.
+
 = v 1.1.5
 *Release Date - 03 October 2025*
 * Fix login issues.

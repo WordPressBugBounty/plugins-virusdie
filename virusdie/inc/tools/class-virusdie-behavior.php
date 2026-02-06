@@ -23,24 +23,41 @@ class VDWS_VirusdieBehavior
 
 	private function init()
 	{
-		if (VDWS_VirusdieApiClient::get_conn_type()) {
-			if (VDWS_VirusdieApiClient::is_key_valid() || $this->auth()) {
-				if ($this->is_logout()) {
-					$this->logout();
-				} else {
-					if ($this->isScanError()) {
-						$this->error('scan');
-					} elseif ($this->is_error()) {
-						$this->error();
-					} else {
-						$this->work();
-					}
-				}
-			}
-		} else {
+		if (!VDWS_VirusdieApiClient::get_conn_type()) {
 			$this->error('php');
+		} elseif (!VDWS_VirusdieApiClient::is_key_valid() && !$this->auth()) {
+			// Not authorized
+		} elseif ($this->isLogout()) {
+			$this->logout();
+		} elseif ($this->isScanError()) {
+			$this->error('scan');
+		} elseif ($this->isRegError()) {
+			$this->error('reg');
+		} elseif ($this->isSiteError()) {
+			$this->error('site');
+		} elseif ($this->isPhpError()) {
+			$this->error('php');
+		} elseif ($this->isError()) {
+			$this->error();
+		} else {
+			$this->work();
 		}
-		$this->build_vars();
+		$this->vars = array(
+			'header' => array(
+				'user' => $this->user,
+				'domain' => !empty($this->site) ? $this->site->getDomain() : $_SERVER['SERVER_NAME'],
+			),
+			'body' => array(
+				'site' => $this->site,
+				'user' => $this->user,
+				'fw_ping' => !empty($this->user) &&
+					($ping = file_get_contents((isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'http').'://'.$_SERVER['SERVER_NAME'].'/?fw_t=ping&fw_k='.md5($this->user->getSyncFileName()))) &&
+					($ping = json_decode($ping, true)) && !empty($ping['status']),
+			),
+			'footer' => array(
+				'user' => $this->user,
+			),
+		);
 		VDWS_VirusdieView::render($this->vars);
 	}
 
@@ -60,16 +77,14 @@ class VDWS_VirusdieBehavior
 		if (!$code) {
 			if (VDWS_VirusdieApiClient::signup($email, $error)) {
 				VDWS_Virusdie::set_current_tab('auth-pass');
+			} elseif ($error === 111901) {
+				return $this->error('reg');
+			} elseif ($error === 111900) {
+				define('VDWS_FOOTER_UNSUBSCRIBED_EMAIL', 1);
+				VDWS_Virusdie::set_current_tab('auth');
 			} else {
-				if ($error === 111901) {
-					return $this->error('reg');
-				} elseif ($error === 111900) {
-					define('VDWS_FOOTER_UNSUBSCRIBED_EMAIL', 1);
-					VDWS_Virusdie::set_current_tab('auth');
-				} else {
-					define('VDWS_FOOTER_INVALID_EMAIL', 1);
-					VDWS_Virusdie::set_current_tab('auth');
-				}
+				define('VDWS_FOOTER_INVALID_EMAIL', 1);
+				VDWS_Virusdie::set_current_tab('auth');
 			}
 			return false;
 		}
@@ -94,21 +109,15 @@ class VDWS_VirusdieBehavior
 			}
 			VDWS_Virusdie::set_user_exist($this->user->getEmail());
 			return $this->welcome();
-		} elseif (VDWS_Virusdie::is_user_exist($this->user->getEmail()) && !VDWS_VirusdieHelper::checkSyncFile($this->user)) {
+		} elseif (!VDWS_VirusdieHelper::checkSyncFile($this->user)) {
 			VDWS_Virusdie::set_user_exist($this->user->getEmail());
 			if (!VDWS_VirusdieHelper::updateSyncFile($this->user)) {
-				return $this->error('reg');
+				return $this->error('sync'); // $this->error('reg');
 			}
 			return $this->scan();
-		} elseif (VDWS_Virusdie::is_user_exist($this->user->getEmail()) && VDWS_VirusdieHelper::checkSyncFile($this->user)) {
-			VDWS_Virusdie::set_user_exist($this->user->getEmail());
-			if (!VDWS_VirusdieHelper::updateSyncFile($this->user)) {
-				return $this->error('sync');
-			}
-			return $this->dashboard();
 		} else {
 			VDWS_Virusdie::set_user_exist($this->user->getEmail());
-			return $this->error();
+			return $this->dashboard();
 		}
 	}
 
@@ -130,14 +139,19 @@ class VDWS_VirusdieBehavior
 		return true;
 	}
 
-	private function is_logout()
+	private function logout()
+	{
+		return VDWS_VirusdieApiClient::signout() && VDWS_Virusdie::set_current_tab('auth');
+	}
+
+	private function isLogout()
 	{
 		return isset($_GET['logout']);
 	}
 
-	private function is_error()
+	private function isError()
 	{
-		return isset($_GET['error']) || $this->isScanError() || $this->isRegError() || $this->isSiteError() || $this->isPhpError();
+		return isset($_GET['error']);
 	}
 
 	private function isScanError()
@@ -160,123 +174,104 @@ class VDWS_VirusdieBehavior
 		return isset($_GET['php-error']);
 	}
 
-	private function logout()
-	{
-		return VDWS_VirusdieApiClient::signout() && VDWS_Virusdie::set_current_tab('auth');
-	}
-
 	private function error($type = null)
 	{
 		$this->user = new VDWS_VirusdieUser();
 		switch ($type) {
-			case 'site':
-				VDWS_Virusdie::set_current_tab('site-error');
-				break;
-			case 'scan':
-				VDWS_Virusdie::set_current_tab('scan-error');
-				break;
-			case 'reg':
-				VDWS_Virusdie::set_current_tab('reg-error');
-				break;
-			case 'sync':
-				VDWS_Virusdie::set_current_tab('sync-error');
-				break;
-			case 'php':
-				VDWS_Virusdie::set_current_tab('php-error');
-				break;
-			default:
-				VDWS_Virusdie::set_current_tab('error');
+		case 'site': VDWS_Virusdie::set_current_tab('site-error'); break;
+		case 'scan': VDWS_Virusdie::set_current_tab('scan-error'); break;
+		case 'reg':  VDWS_Virusdie::set_current_tab('reg-error'); break;
+		case 'sync': VDWS_Virusdie::set_current_tab('sync-error'); break;
+		case 'php':  VDWS_Virusdie::set_current_tab('php-error'); break;
+		default:     VDWS_Virusdie::set_current_tab('error'); break;
 		}
 		return false;
 	}
 
-	private function isJson($string)
+	/*
+	public static function canDoAjax()
 	{
-		return is_string($string) && json_last_error() === JSON_ERROR_NONE;
-	}
-
-	private function build_vars()
-	{
-		$this->vars = array(
-			'header' => array(
-				'user' => $this->user,
-				'domain' => !empty($this->site) ? $this->site->getDomain() : $_SERVER['SERVER_NAME'],
-			),
-			'body' => array(
-				'site' => $this->site,
-				'user' => $this->user,
-				'fw_ping' => !empty($this->user) ? (
-					($ping = file_get_contents($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . '?fw_t=ping&fw_k=' . md5($this->user->getSyncFileName()))) &&
-					$this->isJson($ping) && ($ping = json_decode($ping, true)) && ($ping['status'] === 1)
-				) : false,
-			),
-			'footer' => array(
-				'user' => $this->user,
-			),
-		);
+		if (!current_user_can('manage_options')) {
+			wp_send_json_error(array('error' => 'Permission denied'), 403);
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	public static function vd_switcher()
 	{
-		if (empty($_POST['name']) || empty($_POST['checked']))
+		if (!self::canDoAjax()) {
+			return;
+		}
+		if (empty($_POST['name']) || empty($_POST['checked'])) {
 			wp_die(json_encode(array('status' => false)));
-
+		}
 		$response = array();
 		$name = sanitize_text_field($_POST['name']);
 		$sec_name = sanitize_text_field(VDWS_VirusdieHelper::getSecondSwitcher($name));
 		$checked = sanitize_key($_POST['checked']);
 		$res = false;
-
 		switch ($name) {
-			case 'onDailyScans':
-			case 'onDailyScansSec':
-				$res = VDWS_VirusdieApiClient::toggle_daily_scan($checked === 'true');
-				break;
-			case 'onAutoClean':
-			case 'onAutoCleanSec':
-				$res = VDWS_VirusdieApiClient::toggle_auto_clean($checked === 'true');
-				break;
-			case 'onPatchManager':
-			case 'onPatchManagerSec':
-				$res = VDWS_VirusdieApiClient::toggle_auto_patch($checked === 'true');
-				break;
-			case 'onFireWall':
-			case 'onFireWallSec':
-				$res = VDWS_VirusdieApiClient::toggle_firewall($checked === 'true');
-				break;
-			case 'onInsurance':
-			case 'onInsuranceSec':
-				$res = false;
-				break;
+		case 'onDailyScans':
+		case 'onDailyScansSec':
+			$res = VDWS_VirusdieApiClient::toggle_daily_scan($checked === 'true');
+			break;
+		case 'onAutoClean':
+		case 'onAutoCleanSec':
+			$res = VDWS_VirusdieApiClient::toggle_auto_clean($checked === 'true');
+			break;
+		case 'onPatchManager':
+		case 'onPatchManagerSec':
+			$res = VDWS_VirusdieApiClient::toggle_auto_patch($checked === 'true');
+			break;
+		case 'onFireWall':
+		case 'onFireWallSec':
+			$res = VDWS_VirusdieApiClient::toggle_firewall($checked === 'true');
+			break;
+		case 'onInsurance':
+		case 'onInsuranceSec':
+			$res = false;
+			break;
 		}
-
 		$response['status'] = $res;
 		$response['checked'] = $checked;
 		$response['names'] = array($name, $sec_name);
-
 		header("Content-Type: application/json; charset=UTF-8");
 		wp_die(json_encode($response));
 	}
 
 	public static function vd_scan_start()
 	{
+		if (!self::canDoAjax()) {
+			return;
+		}
 		wp_die(VDWS_VirusdieApiClient::scan());
 	}
 
 	public static function vd_get_progress()
 	{
+		if (!self::canDoAjax()) {
+			return;
+		}
 		header("Content-Type: application/json; charset=UTF-8");
 		wp_die(json_encode(VDWS_VirusdieApiClient::get_progress()));
 	}
 
 	public static function vd_get_apikey()
 	{
+		if (!self::canDoAjax()) {
+			return;
+		}
 		wp_die(VDWS_Virusdie::get_api_key());
 	}
 
 	public static function vd_resend()
 	{
-		return isset($_POST['vd_email']) && wp_die(VDWS_VirusdieApiClient::signup($_POST['vd_email'], $err));
+		if (!self::canDoAjax() || !isset($_POST['vd_email'])) {
+			return;
+		}
+		wp_die(VDWS_VirusdieApiClient::signup($_POST['vd_email'], $err));
 	}
+	*/
 
 }

@@ -67,13 +67,12 @@ class VDWS_Virusdie
 
 		add_filter( 'plugin_action_links_' . plugin_basename( VDWS_VIRUSDIE_PLUGIN_FILE ), array( $this, 'page_plugin_action' ) );
 
-		add_action( 'wp_ajax_virusdie_switcher', 'VDWS_VirusdieBehavior::vd_switcher' );
+		// add_action( 'wp_ajax_virusdie_switcher', 'VDWS_VirusdieBehavior::vd_switcher' );
 		// add_action( 'wp_ajax_nopriv_virusdie_switcher', 'VDWS_VirusdieBehavior::vd_switcher' ); // Will be used in future versions
-		add_action( 'wp_ajax_virusdie_ajax_error', 'VDWS_VirusdieBehavior::vd_ajax_error' );
-		add_action( 'wp_ajax_virusdie_start_scan', 'VDWS_VirusdieBehavior::vd_scan_start' );
-		add_action( 'wp_ajax_virusdie_get_progress', 'VDWS_VirusdieBehavior::vd_get_progress' );
-		add_action( 'wp_ajax_virusdie_apikey', 'VDWS_VirusdieBehavior::vd_get_apikey' );
-		add_action( 'wp_ajax_virusdie_resend', 'VDWS_VirusdieBehavior::vd_resend' );
+		// add_action( 'wp_ajax_virusdie_start_scan', 'VDWS_VirusdieBehavior::vd_scan_start' );
+		// add_action( 'wp_ajax_virusdie_get_progress', 'VDWS_VirusdieBehavior::vd_get_progress' );
+		// add_action( 'wp_ajax_virusdie_apikey', 'VDWS_VirusdieBehavior::vd_get_apikey' );
+		// add_action( 'wp_ajax_virusdie_resend', 'VDWS_VirusdieBehavior::vd_resend' );
 	}
 
 	/**
@@ -127,17 +126,15 @@ class VDWS_Virusdie
 	{
 		$screen = get_current_screen();
 		// Don't enqueue anything unless we're on the virusdie page.
-		if ( ( !isset($_GET['page']) || 'virusdie' !== $_GET['page']) && !in_array($screen->base, array(
-				'dashboard',
-				'welcome',
-				'scan-start',
-				'scan-error',
-				'error',
-			))) {
-				return;
+		if (
+			(!isset($_GET['page']) || 'virusdie' !== $_GET['page']) &&
+			!in_array($screen->base, array('dashboard','welcome','scan-start','scan-error','error'))
+		) {
+			return;
 		}
+		$tab = self::get_current_tab();
 		wp_enqueue_style('virusdie-style', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/css/virusdie.css', array(), constant('VDWS_VIRUSDIE_PLUGIN_VERSION'));
-		if (in_array(self::$tab, array('free', 'premium'))) {
+		if ( $tab === 'free' || $tab === 'premium' ) {
 			wp_enqueue_style('jvector-virusdie-style', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/css/jquery-jvectormap-2.0.5.css', array('virusdie-style'), constant('VDWS_VIRUSDIE_PLUGIN_VERSION'));
 		}
 	}
@@ -160,37 +157,34 @@ class VDWS_Virusdie
 		// Don't enqueue anything unless we're on the virusdie page.
 		if (
 			(!isset($_GET['page']) || 'virusdie' !== $_GET['page']) &&
-			!in_array($screen->base, array('dashboard', 'welcome', 'scan-start', 'scan-error', 'error'))
+			!in_array($screen->base, array('dashboard','welcome','scan-start','scan-error','error'))
 		) {
 			return;
 		}
-		$tab = VDWS_Virusdie::get_current_tab();
+		$tab = self::get_current_tab();
 		wp_enqueue_script( 'socket-io-virusdie', constant('VDWS_VIRUSDIE_SITE_PANEL') . '/socket.io/socket.io.js', array(), null, true);
 		wp_enqueue_script( 'socketio-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-socketio.js', array('socket-io-virusdie'), null, true);
-		if ( $tab === 'auth-pass' ) {
+		/* if ( $tab === 'auth-pass' ) {
 			wp_enqueue_script( 'auth-pass-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-resend.js');
-		}
-		if ( in_array($tab, array('free', 'premium') ) ) {
+		} elseif ( $tab === 'scan-start' ) {
+			wp_enqueue_script( 'progressbar-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/progressbar.js', array(), null, true);
+			wp_enqueue_script( 'scanner-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-scanner.js', array('progressbar-virusdie'), null, true);
+		} else */
+		if ( $tab === 'free' || $tab === 'premium' ) {
 			wp_enqueue_script( 'sweetalert2-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/sweetalert2.all.min.js', array(), null, true);
 			wp_enqueue_script( 'jvector-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/jquery-jvectormap-2.0.5.min.js', array('jquery'), null, true);
 			wp_enqueue_script( 'world-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/jquery-jvectormap-world-mill.js', array('jvector-virusdie'), null, true);
 			wp_enqueue_script( 'map-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-map.js', array('jvector-virusdie', 'world-virusdie'), null, true);
-		}
-		if ( $tab === 'free' ) {
-			wp_enqueue_script( 'modals-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-modals.js', array(), null, true);
-		}
-		if ( $tab === 'premium' ) {
-			wp_enqueue_script( 'switcher-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-switcher.js', array(), null, true);
-		}
-		if ( $tab === 'scan-start' ) {
-			wp_enqueue_script( 'progressbar-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/progressbar.js', array(), null, true);
-			wp_enqueue_script( 'scanner-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-scanner.js', array('progressbar-virusdie'), null, true);
-		}
-		if ( $tab === 'welcome' ) {
+			if ( $tab === 'free' ) {
+				wp_enqueue_script( 'modals-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-modals.js', array(), null, true);
+			} elseif ( $tab === 'premium' ) {
+				// wp_enqueue_script( 'switcher-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-switcher.js', array(), null, true);
+			}
+		} elseif ( $tab === 'welcome' ) {
 			wp_enqueue_script( 'tiny-slider-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/tiny-slider.js', array(), null, true);
 			wp_enqueue_script( 'slider-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-slider.js', array(), null, true);
 		}
-		if ( in_array($tab, array('free','premium','scan-start','scan-error','welcome', 'error') ) ) {
+		if ( in_array($tab, array('free','premium','scan-start','scan-error','welcome','error')) ) {
 			wp_enqueue_script( 'usermenu-virusdie', constant('VDWS_VIRUSDIE_PLUGIN_URL') . 'assets/js/vdws-usermenu.js', array(), null, true);
 		}
 	}
@@ -301,8 +295,6 @@ class VDWS_Virusdie
 	/**
 	 * Render our admin page.
 	 *
-	 * @uses VDWS_Virusdie::get_current_tab()
-	 *
 	 * @return void
 	 */
 	public function dashboard_page()
@@ -317,7 +309,7 @@ class VDWS_Virusdie
 
 	public static function set_current_tab( $tab )
 	{
-		if (!is_string(($tab)))
+		if (!is_string($tab))
 			return false;
 		self::$tab = $tab;
 		return true;
