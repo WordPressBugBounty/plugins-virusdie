@@ -1,10 +1,10 @@
-=== Virusdie - One-click website security ===
+=== Virusdie | One-click website security ===
 Contributors: virusdie, matveevartem
-Tags: antivirus, security plugin, security, malware scanner, firewall, website antivirus, malware, virusdie, WAF, auto cleanup, web application firewall, patch manager
+Tags: website antivirus, security, malware scanner, virusdie, web application firewall
 Requires at least: 5.0
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Plugin URI: https://wordpress.org/plugins/virusdie/
@@ -168,6 +168,12 @@ You can find both documents on our official website via links: [Terms of Use](ht
 4. Premium dashboard page
 
 == Changelog ==
+
+= v 1.1.9
+
+*Release Date - 4 June 2026*
+
+* WordPress 7.0 compatibility.
 
 = v 1.1.8
 
